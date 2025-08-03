@@ -542,5 +542,38 @@ updateCartUI();
   margin: 10px 0 5px;
   text-align: center;
 }
+/* Animation cho filter chuyển danh mục */
+.menu-items.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.menu-items.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+
+.cart-remove {
+  margin-left: 4px;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.cart-remove:hover {
+  text-decoration: underline;
+}
+
+
+
+
+
 
 

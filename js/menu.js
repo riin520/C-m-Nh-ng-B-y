@@ -224,22 +224,37 @@ function renderMenu(filter = "all") {
     menuContainer.appendChild(div);
   });
 }
+function removeCheckoutItem(id) {
+  const index = cartData.findIndex((item) => item.id === id);
+  if (index !== -1) {
+    cartData.splice(index, 1); // Xóa 1 đơn vị
+    localStorage.setItem("cart", JSON.stringify(cartData)); // Cập nhật localStorage
+    renderCheckout(); // Render lại danh sách
+  }
+}
 
 // ============ GIỎ HÀNG ============ //
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
+// Thêm món vào giỏ
 function addToCart(id) {
   const item = menuData.find((menu) => menu.id === id);
   cart.push(item);
+  localStorage.setItem("cart", JSON.stringify(cart));
   updateCartUI();
 }
 
-function removeFromCart(id) {
-  cart = cart.filter((c) => c.id !== id);
-  updateCartUI();
-  saveCartToLocal();
+// Xóa 1 đơn vị món
+function removeSingleItem(id) {
+  const index = cart.findIndex((item) => item.id === id);
+  if (index !== -1) {
+    cart.splice(index, 1); // Xóa 1 đơn vị
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartUI();
+  }
 }
 
+// Cập nhật giao diện giỏ hàng
 function updateCartUI() {
   const cartItems = document.getElementById("cart-items");
   const totalElement = document.getElementById("cart-total");
@@ -259,15 +274,17 @@ function updateCartUI() {
     totalPrice += item.price;
   });
 
-  // Hiển thị món đã gom nhóm
+  // Hiển thị món đã gom nhóm + nút xóa
   Object.values(groupedCart).forEach((groupedItem) => {
     const li = document.createElement("li");
     li.innerHTML = `
       <span>
-        <strong>${groupedItem.name}</strong> x ${groupedItem.quantity} - ${(
-      groupedItem.price * groupedItem.quantity
-    ).toLocaleString()} VND
+        <strong>${groupedItem.name}</strong> x ${groupedItem.quantity} - 
+        ${(groupedItem.price * groupedItem.quantity).toLocaleString()} VND
       </span>
+      <button class="cart-remove" onclick="removeSingleItem(${
+        groupedItem.id
+      })">-</button>
     `;
     cartItems.appendChild(li);
   });
@@ -276,10 +293,14 @@ function updateCartUI() {
   totalElement.textContent = totalPrice.toLocaleString();
 }
 
+// Chuyển tới trang checkout
 function goToCheckout() {
   localStorage.setItem("cart", JSON.stringify(cart));
   window.location.href = "checkout.html";
 }
+
+// Gọi hàm để hiển thị giỏ ngay khi load trang
+updateCartUI();
 
 // ============ NAVBAR RESPONSIVE ============ //
 document.getElementById("menu-toggle").addEventListener("click", function () {

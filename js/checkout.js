@@ -27,11 +27,15 @@ function renderCheckout() {
     const div = document.createElement("div");
     div.classList.add("order-item");
     div.innerHTML = `
-      <span>${groupedItem.name} x ${groupedItem.quantity}</span>
-      <span>${(
-        groupedItem.price * groupedItem.quantity
-      ).toLocaleString()} VND</span>
-    `;
+    <span>${groupedItem.name} x ${groupedItem.quantity}</span>
+    <span>
+      ${(groupedItem.price * groupedItem.quantity).toLocaleString()} VND
+      <button class="cart-remove" onclick="removeCheckoutItem(${
+        groupedItem.id
+      })">-</button>
+    </span>
+  `;
+
     orderSummary.appendChild(div);
   });
 
@@ -40,6 +44,14 @@ function renderCheckout() {
   totalDiv.classList.add("order-total");
   totalDiv.textContent = `Tổng cộng: ${totalPrice.toLocaleString()} VND`;
   orderSummary.appendChild(totalDiv);
+}
+function removeCheckoutItem(id) {
+  const index = cartData.findIndex((item) => item.id === id);
+  if (index !== -1) {
+    cartData.splice(index, 1); // Xóa 1 đơn vị món
+    localStorage.setItem("cart", JSON.stringify(cartData)); // Cập nhật giỏ hàng
+    renderCheckout(); // Cập nhật lại giao diện
+  }
 }
 
 // Xử lý form khách hàng
@@ -105,12 +117,12 @@ document
 
     // Hiển thị thông tin vào modal
     orderDetails.innerHTML = `
-    Mã đơn hàng: <strong>${orderId}</strong><br>
-    Khách: ${name}<br>
-    Thanh toán: ${payment}<br>
-    Ngày giờ: ${dateString}<br><br>
-    Cảm ơn bạn đã đặt hàng tại <b>Cơm Nhà Ông Bảy</b>!
-  `;
+      Mã đơn hàng: <strong>${orderId}</strong><br>
+      Khách: ${name}<br>
+      Thanh toán: ${payment}<br>
+      Ngày giờ: ${dateString}<br><br>
+      Cảm ơn bạn đã đặt hàng tại <b>Cơm Nhà Ông Bảy</b>!
+    `;
 
     modal.style.display = "flex";
     localStorage.removeItem("cart");
